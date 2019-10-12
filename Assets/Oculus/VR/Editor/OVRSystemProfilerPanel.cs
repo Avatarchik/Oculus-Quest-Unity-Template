@@ -28,7 +28,6 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEditor;
 using System.Text;
 

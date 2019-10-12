@@ -11,10 +11,4 @@ public class Grabbable : MonoBehaviour
 		Rigidbody rigidbody = GetComponent<Rigidbody>();
 		rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 	}
-
-	public void Ungrab(Vector3 velocity, Vector3 angularVelocity) {
-		Rigidbody rigidbody = GetComponent<Rigidbody>();
-		rigidbody.velocity = velocity;
-		rigidbody.angularVelocity = angularVelocity;
-	}
 }

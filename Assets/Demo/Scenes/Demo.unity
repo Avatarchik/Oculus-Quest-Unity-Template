@@ -299,6 +299,7 @@ GameObject:
   - component: {fileID: 472451178}
   - component: {fileID: 472451177}
   - component: {fileID: 472451181}
+  - component: {fileID: 472451183}
   - component: {fileID: 472451182}
   m_Layer: 0
   m_Name: Grabbable Object
@@ -407,6 +408,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a4b7b6e38a5d8441ac2f72ecf9b91e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!138 &472451183
+FixedJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472451176}
+  m_ConnectedBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!1001 &709909834
 PrefabInstance:
   m_ObjectHideFlags: 0

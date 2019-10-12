@@ -9,6 +9,8 @@ public class Grabber : MonoBehaviour
 	public float GrabBegin = 0.55f;
 	public float GrabEnd = 0.35f;
 
+	public Transform SnapTransform;
+
 	new private Rigidbody rigidbody;
 	private OVRInput.Controller controller;
 	private Grabbable touchingGrabbable;
@@ -52,26 +54,19 @@ public class Grabber : MonoBehaviour
 
 	private void Grab(Grabbable grabbable) {
 		grabbingGrabbable = grabbable;
-
-		// connect the grabbable to the grabber via a fixed joint
-		FixedJoint joint = grabbingGrabbable.GetComponent<FixedJoint>();
-		if(joint == null) {
-			joint = grabbingGrabbable.gameObject.AddComponent<FixedJoint>();
-		}
-		joint.connectedBody = rigidbody;
+		grabbable.GetComponent<Rigidbody>().isKinematic = true;
+		grabbable.transform.parent = transform;
 	}
 
 	private void Ungrab() {
-		// break fixed joint connection
-		// must destroy the fixed joint component, otherwise setting grabbable's velocity & angularVelocity won't work
-		FixedJoint joint = grabbingGrabbable.GetComponent<FixedJoint>();
-		if (joint.connectedBody == this.rigidbody) {
-			joint.connectedBody = null;
-			Destroy(joint);
-
+		if(grabbingGrabbable.transform.parent == transform) {
 			Vector3 velocity = OVRInput.GetLocalControllerVelocity(controller);
 			Vector3 angularVelocity = OVRInput.GetLocalControllerAngularVelocity(controller) * -1;
+
+			grabbingGrabbable.transform.SetParent(null, true);
+
 			Rigidbody rigidbody = grabbingGrabbable.GetComponent<Rigidbody>();
+			rigidbody.isKinematic = false;
 			rigidbody.velocity = velocity;
 			rigidbody.angularVelocity = angularVelocity;
 		}

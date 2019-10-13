@@ -17,11 +17,11 @@ public class Grabber : MonoBehaviour
 	private Grabbable grabbingGrabbable;
 
 	private void Start() {
-		controller = GetComponent<QuestController>().Controller;
-
 		rigidbody = GetComponent<Rigidbody>();
 		rigidbody.useGravity = false;
 		rigidbody.isKinematic = true;
+
+		controller = GetComponent<QuestController>().Controller;
 	}
 
 	private void Update() {
@@ -39,14 +39,14 @@ public class Grabber : MonoBehaviour
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		Grabbable grabbable = other.GetComponent<Grabbable>();
+		Grabbable grabbable = other.GetComponentInParent<Grabbable>();
 		if (grabbable != null) {
 			touchingGrabbable = grabbable;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		Grabbable grabbable = other.GetComponent<Grabbable>();
+		Grabbable grabbable = other.GetComponentInParent<Grabbable>();
 		if(grabbable == touchingGrabbable) {
 			touchingGrabbable = null;
 		}
@@ -54,17 +54,30 @@ public class Grabber : MonoBehaviour
 
 	private void Grab(Grabbable grabbable) {
 		grabbingGrabbable = grabbable;
-		grabbable.GetComponent<Rigidbody>().isKinematic = true;
-		grabbable.transform.parent = transform;
+
+		Rigidbody rigidbody = grabbable.GetComponent<Rigidbody>();
+		rigidbody.isKinematic = false;
+		rigidbody.velocity = Vector3.zero;
+		rigidbody.angularVelocity = Vector3.zero;
+
+		if (SnapTransform != null) {
+			grabbable.transform.SetParent(SnapTransform, true);
+			grabbable.transform.localPosition = Vector3.zero;
+			grabbable.transform.localEulerAngles = Vector3.zero;
+		}
+		else {
+			grabbable.transform.SetParent(transform, true);
+		}
 	}
 
 	private void Ungrab() {
-		if(grabbingGrabbable.transform.parent == transform) {
-			Vector3 velocity = OVRInput.GetLocalControllerVelocity(controller);
-			Vector3 angularVelocity = OVRInput.GetLocalControllerAngularVelocity(controller) * -1;
-
+		if(grabbingGrabbable.transform.parent == transform || grabbingGrabbable.transform.parent == SnapTransform) {
+			// detach the grabbable from grabber
 			grabbingGrabbable.transform.SetParent(null, true);
 
+			// apply controller's velocity to the detached grabbable to support "throw away"
+			Vector3 velocity = OVRInput.GetLocalControllerVelocity(controller);
+			Vector3 angularVelocity = OVRInput.GetLocalControllerAngularVelocity(controller) * -1;
 			Rigidbody rigidbody = grabbingGrabbable.GetComponent<Rigidbody>();
 			rigidbody.isKinematic = false;
 			rigidbody.velocity = velocity;

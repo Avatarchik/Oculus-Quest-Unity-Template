@@ -53,9 +53,8 @@ public class Grabber : MonoBehaviour
 	}
 
 	private void Grab(Grabbable grabbable) {
-		if (grabbingGrabbable == null) {
+		if (grabbingGrabbable == null && grabbable.GrabBy(this)) {
 			grabbingGrabbable = grabbable;
-			grabbingGrabbable.GrabBy(this);
 		}
 	}
 

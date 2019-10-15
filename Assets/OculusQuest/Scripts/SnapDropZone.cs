@@ -10,7 +10,7 @@ public class SnapDropZone : MonoBehaviour
 
 	private MeshRenderer placeHolderRenderer;
 	private List<Grabbable> touchingGrabbables = new List<Grabbable>();
-	private List<Grabbable> snappedGrabbables = new List<Grabbable>();
+	private Grabbable snappedGrabbable = null;
 
 	private void Start() {
 		// replace placeholder's original material with hightlight material
@@ -21,7 +21,7 @@ public class SnapDropZone : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other) {
 		Grabbable grabbable = other.GetComponent<Grabbable>();
-		if(grabbable != null && grabbable.IsBeingGrabbed && !touchingGrabbables.Contains(grabbable)) {
+		if(snappedGrabbable == null && grabbable != null && grabbable.IsBeingGrabbed && !touchingGrabbables.Contains(grabbable)) {
 			touchingGrabbables.Add(grabbable);
 			grabbable.OnBeingReleased += Snap;
 			Highlight();
@@ -55,7 +55,7 @@ public class SnapDropZone : MonoBehaviour
 			touchingGrabbable.OnBeingReleased -= Snap;
 		}
 		touchingGrabbables.Clear();
-		snappedGrabbables.Add(grabbable);
+		snappedGrabbable = grabbable;
 
 		grabbable.SnapTo(this);
 	}

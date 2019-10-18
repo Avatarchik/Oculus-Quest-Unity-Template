@@ -738,10 +738,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Wep_SniperSwat_01
       objectReference: {fileID: 0}
-    - target: {fileID: 199492, guid: f7397c12ba664d24989c07eba4e79ecb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 445782, guid: f7397c12ba664d24989c07eba4e79ecb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -785,6 +781,10 @@ PrefabInstance:
     - target: {fileID: 445782, guid: f7397c12ba664d24989c07eba4e79ecb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 199492, guid: f7397c12ba664d24989c07eba4e79ecb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7397c12ba664d24989c07eba4e79ecb, type: 3}
@@ -855,5 +855,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8737455062520231628, guid: cb49da4b8f807d14f8adbd803741f9c3,
+        type: 3}
+      propertyPath: SnapTransform
+      value: 
+      objectReference: {fileID: 8559452353655569541}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb49da4b8f807d14f8adbd803741f9c3, type: 3}
+--- !u!4 &8559452353655569541 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5491157368815902682, guid: cb49da4b8f807d14f8adbd803741f9c3,
+    type: 3}
+  m_PrefabInstance: {fileID: 8559452353655569540}
+  m_PrefabAsset: {fileID: 0}

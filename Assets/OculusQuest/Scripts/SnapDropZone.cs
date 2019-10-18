@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class SnapDropZone : MonoBehaviour
+public class SnapDropZone : Attachable
 {
 	public GameObject Placeholder;
 	public Material HighlightMaterial;
@@ -21,7 +21,7 @@ public class SnapDropZone : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other) {
 		Grabbable grabbable = other.GetComponent<Grabbable>();
-		if(snappedGrabbable == null && grabbable != null && grabbable.IsBeingGrabbed && !touchingGrabbables.Contains(grabbable)) {
+		if(snappedGrabbable == null && grabbable != null && grabbable.IsBeingAttached && !touchingGrabbables.Contains(grabbable)) {
 			touchingGrabbables.Add(grabbable);
 			grabbable.OnBeingReleased += Snap;
 			Highlight();
@@ -57,6 +57,6 @@ public class SnapDropZone : MonoBehaviour
 		touchingGrabbables.Clear();
 		snappedGrabbable = grabbable;
 
-		grabbable.SnapTo(this);
+		grabbable.AttachTo(this);
 	}
 }

@@ -4,15 +4,10 @@ using UnityEngine;
 
 [RequireComponent(typeof(QuestController))]
 [RequireComponent(typeof(Rigidbody))]
-public class Grabber : MonoBehaviour
+public class Grabber : Attachable
 {
-	public float GrabBegin = 0.55f;
-	public float GrabEnd = 0.35f;
-
-	public Transform SnapTransform;
-
 	private new Rigidbody rigidbody;
-	private OVRInput.Controller controller;
+	private QuestController controller;
 	private Grabbable touchingGrabbable;
 	private Grabbable grabbingGrabbable;
 
@@ -21,14 +16,13 @@ public class Grabber : MonoBehaviour
 		rigidbody.useGravity = false;
 		rigidbody.isKinematic = true;
 
-		controller = GetComponent<QuestController>().Controller;
+		controller = GetComponent<QuestController>();
 	}
 
 	private void Update() {
-		// grip button status
-		float gripAxisValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, controller);
-		bool gripButtonPressed = gripAxisValue > GrabBegin;
-		bool gripButtonReleased = gripAxisValue < GrabEnd;
+		bool gripButtonPressed;
+		bool gripButtonReleased;
+		controller.GetGripButton(out gripButtonPressed, out gripButtonReleased);
 
 		if (gripButtonPressed && touchingGrabbable != null) {
 			Grab(touchingGrabbable);
@@ -53,27 +47,15 @@ public class Grabber : MonoBehaviour
 	}
 
 	private void Grab(Grabbable grabbable) {
-		if (grabbingGrabbable == null && grabbable.GrabBy(this)) {
+		if (grabbingGrabbable == null && grabbable.AttachTo(this)) {
 			grabbingGrabbable = grabbable;
 		}
 	}
 
 	private void Ungrab() {
 		if (grabbingGrabbable != null) {
-			grabbingGrabbable.ReleaseFrom(this);
+			grabbingGrabbable.ReleaseFrom(this, controller.Velocity, controller.AngularVelocity);
 			grabbingGrabbable = null;
-		}
-	}
-
-	public Vector3 Velocity {
-		get {
-			return OVRInput.GetLocalControllerVelocity(controller);
-		}
-	}
-
-	public Vector3 AngularVelocity {
-		get {
-			return OVRInput.GetLocalControllerAngularVelocity(controller) * -1;
 		}
 	}
 }

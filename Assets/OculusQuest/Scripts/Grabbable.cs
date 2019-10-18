@@ -6,8 +6,7 @@ using UnityEngine;
 public class Grabbable : MonoBehaviour
 {
 	public delegate void GrabbableInteractionDelegate(Grabbable grabbable);
-	public GrabbableInteractionDelegate OnBeingGrabbed;
-	public GrabbableInteractionDelegate OnBeingSnapped;
+	public GrabbableInteractionDelegate OnBeingAttached;
 	public GrabbableInteractionDelegate OnBeingReleased;
 
 	private new Rigidbody rigidbody;
@@ -20,67 +19,42 @@ public class Grabbable : MonoBehaviour
 		rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 	}
 
-	private void AttachTo(Transform parent, bool resetLocalTransform = false) {
-		rigidbody.isKinematic = true;
-		rigidbody.velocity = Vector3.zero;
-		rigidbody.angularVelocity = Vector3.zero;
+	public bool IsBeingAttached { get; private set; } = false;
 
-		transform.SetParent(parent, true);
-		if(resetLocalTransform) {
-			transform.localPosition = Vector3.zero;
-			transform.localEulerAngles = Vector3.zero;
-		}
+	public bool IsBeingAttachedBy(Attachable attachable) {
+		return IsBeingAttached && transform.parent == attachable.AttachTransform;
 	}
 
-	public bool IsFreeForInteraction {
+	public bool IsBeingAttachedByGrabber {
 		get {
-			return !IsBeingGrabbed && !IsBeingSnapped;
+			return transform.parent != null && transform.parent.GetComponent<Grabber>() != null;
 		}
 	}
-	public bool IsBeingGrabbed { get; private set; } = false;
-	public bool IsBeingSnapped { get; private set; } = false;
+	
+	public bool AttachTo(Attachable attachable) {
+		if(!IsBeingAttached) {
+			IsBeingAttached = true;
 
-	public bool IsBeingGrabbedBy(Grabber grabber) {
-		return IsBeingGrabbed && (transform.parent == grabber.SnapTransform || transform.parent == grabber.transform);
-	}
+			rigidbody.isKinematic = true;
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.angularVelocity = Vector3.zero;
+			attachable.SetChild(transform);
 
-	public bool IsBeingSnappedTo(SnapDropZone snapDropZone) {
-		return IsBeingSnapped && transform.parent == snapDropZone.transform;
-	}
-
-	public bool GrabBy(Grabber grabber) {
-		if (IsFreeForInteraction) {
-			IsBeingGrabbed = true;
-			if(grabber.SnapTransform != null) {
-				AttachTo(grabber.SnapTransform, true);
-			}
-			else {
-				AttachTo(grabber.transform);
-			}
-			OnBeingGrabbed?.Invoke(this);
+			OnBeingAttached?.Invoke(this);
 			return true;
 		}
 		return false;
 	}
 
-	public bool SnapTo(SnapDropZone snapDropZone) {
-		if (IsFreeForInteraction) {
-			IsBeingSnapped = true;
-			AttachTo(snapDropZone.transform, true);
-			OnBeingSnapped?.Invoke(this);
-			return true;
-		}
-		return false;
-	}
+	public bool ReleaseFrom(Grabber grabber, Vector3 velocity, Vector3 angularVelocity) {
+		if (IsBeingAttachedBy(grabber)) {
+			IsBeingAttached = false;
 
-	public bool ReleaseFrom(Grabber grabber) {
-		if (IsBeingGrabbedBy(grabber)) {
-			IsBeingGrabbed = false;
 			transform.SetParent(null, true);
 			
 			rigidbody.isKinematic = false;
-			rigidbody.velocity = grabber.Velocity;
-			rigidbody.angularVelocity = grabber.AngularVelocity; ;
+			rigidbody.velocity = velocity;
+			rigidbody.angularVelocity = angularVelocity; ;
 
 			OnBeingReleased?.Invoke(this);
 			return true;

@@ -35,10 +35,12 @@ public class Grabbable : MonoBehaviour
 		if(!IsBeingAttached) {
 			IsBeingAttached = true;
 
+			attachable.SetChild(transform);
+
 			rigidbody.isKinematic = true;
 			rigidbody.velocity = Vector3.zero;
 			rigidbody.angularVelocity = Vector3.zero;
-			attachable.SetChild(transform);
+			rigidbody.interpolation = RigidbodyInterpolation.None;
 
 			OnBeingAttached?.Invoke(this);
 			return true;
@@ -54,7 +56,8 @@ public class Grabbable : MonoBehaviour
 			
 			rigidbody.isKinematic = false;
 			rigidbody.velocity = velocity;
-			rigidbody.angularVelocity = angularVelocity; ;
+			rigidbody.angularVelocity = angularVelocity;
+			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 
 			OnBeingReleased?.Invoke(this);
 			return true;

@@ -6,7 +6,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Grabber : Attachable
 {
+	public bool HideWhenGrab = false;
+
 	private new Rigidbody rigidbody;
+	private MeshRenderer[] meshRenderers;
 	private QuestController controller;
 	private Grabbable touchingGrabbable;
 	private Grabbable grabbingGrabbable;
@@ -15,6 +18,8 @@ public class Grabber : Attachable
 		rigidbody = GetComponent<Rigidbody>();
 		rigidbody.useGravity = false;
 		rigidbody.isKinematic = true;
+
+		meshRenderers = GetComponentsInChildren<MeshRenderer>();
 
 		controller = GetComponent<QuestController>();
 	}
@@ -49,6 +54,10 @@ public class Grabber : Attachable
 	private void Grab(Grabbable grabbable) {
 		if (grabbingGrabbable == null && grabbable.AttachTo(this)) {
 			grabbingGrabbable = grabbable;
+
+			if(HideWhenGrab) {
+				ToggleAllRenderer(false);
+			}
 		}
 	}
 
@@ -56,6 +65,16 @@ public class Grabber : Attachable
 		if (grabbingGrabbable != null) {
 			grabbingGrabbable.ReleaseFrom(this, controller.Velocity, controller.AngularVelocity);
 			grabbingGrabbable = null;
+
+			if(HideWhenGrab) {
+				ToggleAllRenderer(true);
+			}
+		}
+	}
+
+	private void ToggleAllRenderer(bool enabled) {
+		foreach(MeshRenderer renderer in meshRenderers) {
+			renderer.enabled = enabled;
 		}
 	}
 }

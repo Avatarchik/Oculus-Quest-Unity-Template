@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class SnapDropZone : Attachable
 {
+	public List<string> AcceptTags;
 	public GameObject Placeholder;
 	public Material HighlightMaterial;
 
@@ -21,7 +22,7 @@ public class SnapDropZone : Attachable
 
 	private void OnTriggerEnter(Collider other) {
 		Grabbable grabbable = other.GetComponent<Grabbable>();
-		if(snappedGrabbable == null && grabbable != null && grabbable.IsBeingAttached && !touchingGrabbables.Contains(grabbable)) {
+		if(CanAccept(grabbable)) {
 			touchingGrabbables.Add(grabbable);
 			grabbable.OnBeingReleased += Snap;
 			Highlight();
@@ -38,6 +39,23 @@ public class SnapDropZone : Attachable
 		if(touchingGrabbables.Count == 0) {
 			Unhighlight();
 		}
+	}
+
+	public bool CanAccept(Grabbable grabbable) {
+		// can only snap 1 object at a time
+		if (snappedGrabbable != null) return false;
+
+		// must be a free grabbable
+		if (grabbable == null || grabbable.IsBeingAttached || touchingGrabbables.Contains(grabbable)) {
+			return false;
+		}
+
+		// must has matching tag
+		if (AcceptTags.Count > 0 && !AcceptTags.Contains(grabbable.tag)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public void Highlight() {

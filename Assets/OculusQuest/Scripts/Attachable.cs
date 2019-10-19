@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Attachable : MonoBehaviour
 {
 	public Transform SnapTransform;
@@ -12,14 +13,18 @@ public class Attachable : MonoBehaviour
 		}
 	}
 
-	public void SetChild(Transform transform) {
-		if(SnapTransform != null) {
-			transform.SetParent(SnapTransform, true);
-			transform.localPosition = Vector3.zero;
-			transform.localEulerAngles = Vector3.zero;
+	public void Attach(Grabbable grabbable) {
+		if (SnapTransform != null) {
+			grabbable.transform.SetParent(SnapTransform, true);
+			grabbable.transform.localPosition = Vector3.zero;
+			grabbable.transform.localEulerAngles = Vector3.zero;
 		}
 		else {
-			transform.SetParent(this.transform, true);
+			grabbable.transform.SetParent(this.transform, true);
 		}
+	}
+
+	public void Detach(Grabbable grabbable) {
+		grabbable.transform.SetParent(null, true);
 	}
 }

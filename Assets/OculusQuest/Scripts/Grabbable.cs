@@ -35,7 +35,7 @@ public class Grabbable : MonoBehaviour
 		if(!IsBeingAttached) {
 			IsBeingAttached = true;
 
-			attachable.SetChild(transform);
+			attachable.Attach(this);
 
 			rigidbody.isKinematic = true;
 			rigidbody.velocity = Vector3.zero;
@@ -52,7 +52,7 @@ public class Grabbable : MonoBehaviour
 		if (IsBeingAttachedBy(grabber)) {
 			IsBeingAttached = false;
 
-			transform.SetParent(null, true);
+			grabber.Detach(this);
 			
 			rigidbody.isKinematic = false;
 			rigidbody.velocity = velocity;

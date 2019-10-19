@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(QuestController))]
-[RequireComponent(typeof(Rigidbody))]
 public class Grabber : Attachable
 {
 	public bool HideWhenGrab = false;
-
-	private new Rigidbody rigidbody;
+	
 	private MeshRenderer[] meshRenderers;
 	private QuestController controller;
 	private Grabbable touchingGrabbable;
 	private Grabbable grabbingGrabbable;
 
 	private void Start() {
-		rigidbody = GetComponent<Rigidbody>();
+		Rigidbody rigidbody = GetComponent<Rigidbody>();
 		rigidbody.useGravity = false;
 		rigidbody.isKinematic = true;
 

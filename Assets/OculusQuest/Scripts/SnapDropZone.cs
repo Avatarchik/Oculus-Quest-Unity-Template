@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class SnapDropZone : Attachable
 {
 	public List<string> AcceptTags;
-	public GameObject Placeholder;
 	public Material HighlightMaterial;
 
-	private MeshRenderer placeHolderRenderer;
+	private MeshRenderer[] renderers;
 	private List<Grabbable> touchingGrabbables = new List<Grabbable>();
 	private Grabbable snappedGrabbable = null;
 
 	private void Start() {
-		// replace placeholder's original material with hightlight material
-		placeHolderRenderer = Placeholder.GetComponent<MeshRenderer>();
-		placeHolderRenderer.material = HighlightMaterial;
-		placeHolderRenderer.enabled = false;
+		SnapTransform = transform;
+
+		foreach(Collider collider in GetComponentsInChildren<Collider>()) {
+			collider.isTrigger = true;
+		}
+
+		// replace original material with hightlight material
+		renderers = GetComponentsInChildren<MeshRenderer>();
+		foreach(MeshRenderer renderer in renderers) {
+			renderer.material = HighlightMaterial;
+			renderer.enabled = false;
+		}
 	}
 
 	private void OnTriggerEnter(Collider other) {
@@ -45,8 +51,8 @@ public class SnapDropZone : Attachable
 		// can only snap 1 object at a time
 		if (snappedGrabbable != null) return false;
 
-		// must be a free grabbable
-		if (grabbable == null || grabbable.IsBeingAttached || touchingGrabbables.Contains(grabbable)) {
+		// must be a grabbed grabbable
+		if (grabbable == null || !grabbable.IsBeingAttachedByGrabber || touchingGrabbables.Contains(grabbable)) {
 			return false;
 		}
 
@@ -59,11 +65,11 @@ public class SnapDropZone : Attachable
 	}
 
 	public void Highlight() {
-		placeHolderRenderer.enabled = true;
+		ToggleRenderers(true);
 	}
 
 	public void Unhighlight() {
-		placeHolderRenderer.enabled = false;
+		ToggleRenderers(false);
 	}
 
 	public void Snap(Grabbable grabbable) {
@@ -76,5 +82,11 @@ public class SnapDropZone : Attachable
 		snappedGrabbable = grabbable;
 
 		grabbable.AttachTo(this);
+	}
+
+	private void ToggleRenderers(bool enabled) {
+		foreach (MeshRenderer renderer in renderers) {
+			renderer.enabled = enabled;
+		}
 	}
 }

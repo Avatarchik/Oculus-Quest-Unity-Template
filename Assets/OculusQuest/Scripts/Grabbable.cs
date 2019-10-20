@@ -31,21 +31,17 @@ public class Grabbable : MonoBehaviour
 		}
 	}
 	
-	public bool AttachTo(Attachable attachable) {
-		if(!IsBeingAttached) {
-			IsBeingAttached = true;
+	public void AttachTo(Attachable attachable) {
+		IsBeingAttached = true;
 
-			attachable.Attach(this);
+		attachable.Attach(this);
 
-			rigidbody.isKinematic = true;
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.angularVelocity = Vector3.zero;
-			rigidbody.interpolation = RigidbodyInterpolation.None;
+		rigidbody.isKinematic = true;
+		rigidbody.velocity = Vector3.zero;
+		rigidbody.angularVelocity = Vector3.zero;
+		rigidbody.interpolation = RigidbodyInterpolation.None;
 
-			OnBeingAttached?.Invoke(this);
-			return true;
-		}
-		return false;
+		OnBeingAttached?.Invoke(this);
 	}
 
 	public bool ReleaseFrom(Grabber grabber, Vector3 velocity, Vector3 angularVelocity) {

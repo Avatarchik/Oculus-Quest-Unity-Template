@@ -50,7 +50,8 @@ public class Grabber : Attachable
 	}
 
 	private void Grab(Grabbable grabbable) {
-		if (grabbingGrabbable == null && grabbable.AttachTo(this)) {
+		if (grabbingGrabbable == null) {
+			grabbable.AttachTo(this);
 			grabbingGrabbable = grabbable;
 
 			if(HideWhenGrab) {

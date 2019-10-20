@@ -78,15 +78,22 @@ public class SnapDropZone : Attachable
 		foreach(Grabbable touchingGrabbable in touchingGrabbables) {
 			touchingGrabbable.OnBeingReleased -= Snap;
 		}
-		touchingGrabbables.Clear();
-		snappedGrabbable = grabbable;
 
 		grabbable.AttachTo(this);
+		grabbable.OnBeingAttached += OnItemBeingDetached;
+
+		touchingGrabbables.Clear();
+		snappedGrabbable = grabbable;
 	}
 
 	private void ToggleRenderers(bool enabled) {
 		foreach (MeshRenderer renderer in renderers) {
 			renderer.enabled = enabled;
 		}
+	}
+
+	private void OnItemBeingDetached(Grabbable grabbable) {
+		snappedGrabbable.OnBeingAttached -= OnItemBeingDetached;
+		snappedGrabbable = null;
 	}
 }
